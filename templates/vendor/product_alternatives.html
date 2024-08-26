@@ -1,0 +1,182 @@
+{% extends 'basevendor.html' %}
+
+{% block title %}Product Alternatives{% endblock %}
+{% block page_heading %}Product Alternatives{% endblock page_heading %}
+{% block heading %}Manage Product Alternatives{% endblock heading %}
+{% block extra_head %}
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+  }
+
+  .container {
+      margin-top: 50px;
+  }
+
+  table {
+      width: 100%;
+      margin-top: 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-collapse: collapse;
+  }
+
+  th, td {
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #ddd;
+  }
+
+  th {
+      background-color: #413a42;
+      color: white;
+  }
+
+  tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  tr:hover {
+      background-color: #ddd;
+  }
+
+  .btn {
+      margin: 5px;
+  }
+</style>
+{% endblock %}
+  
+{% block content %}
+<div class="text-center mb-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductAlternativeModal">
+        Add Product Alternative
+    </button>
+</div>
+
+<table>
+    <tr>
+        <th>Product Name</th>
+        <th>Selling Price</th>
+        <th>Size</th>
+        <th>Stock</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    {% for alternative in data %}
+    <tr>
+        <td>{{ alternative.product.name }}</td>
+        <td>{{ alternative.selling_price }}</td>
+        <td>{{ alternative.sizes.name }}</td>
+        <td>{{ alternative.stock }}</td>
+        <td>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProductAlternativeModal{{ alternative.id }}">
+                Edit
+            </button>
+        </td>
+        <td>
+            <form method="post" action="{% url 'delete_product_alternative' alternative.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Add Product Alternative Modal -->
+<div class="modal fade" id="addProductAlternativeModal" tabindex="-1" aria-labelledby="addProductAlternativeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductAlternativeModalLabel">Add Product Alternative</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'product_alternatives' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="product" class="form-label">Product</label>
+                        <select class="form-control" id="product" name="product" required>
+                            <option value="" disabled selected>Select a Product</option>
+                            {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selling_price" class="form-label">Selling Price</label>
+                        <input type="number" class="form-control" id="selling_price" name="selling_price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="size" class="form-label">Size</label>
+                        <select class="form-control" id="size" name="size" required>
+                            <option value="" disabled selected>Select a Size</option>
+                            {% for size in sizes %}
+                                <option value="{{ size.id }}">{{ size.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Add Product Alternative</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Product Alternative Modals -->
+{% for alternative in data %}
+<div class="modal fade" id="editProductAlternativeModal{{ alternative.id }}" tabindex="-1" aria-labelledby="editProductAlternativeModalLabel{{ alternative.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductAlternativeModalLabel{{ alternative.id }}">Edit Product Alternative</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'edit_product_alternative' alternative.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="product" class="form-label">Product</label>
+                        <select class="form-control" id="product" name="product" required>
+                            <option value="" disabled>Select a Product</option>
+                            {% for product in products %}
+                                <option value="{{ product.id }}" {% if product.id == alternative.product.id %}selected{% endif %}>{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selling_price" class="form-label">Selling Price</label>
+                        <input type="number" class="form-control" id="selling_price" name="selling_price" value="{{ alternative.selling_price }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="size" class="form-label">Size</label>
+                        <select class="form-control" id="size" name="size" required>
+                            <option value="" disabled>Select a Size</option>
+                            {% for size in sizes %}
+                                <option value="{{ size.id }}" {% if size.id == alternative.sizes.id %}selected{% endif %}>{{ size.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" value="{{ alternative.stock }}" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Update Product Alternative</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

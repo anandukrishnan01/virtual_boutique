@@ -1,0 +1,4 @@
+cmate/segmentation/models/deeplab/frozen_inference_graph-110871.pb filter=lfs diff=lfs merge=lfs -text
+cmate/segmentation/models/mpii_openpose_body25/pose_iter_584000.caffemodel filter=lfs diff=lfs merge=lfs -text
+*.pb filter=lfs diff=lfs merge=lfs -text
+*.caffemodel filter=lfs diff=lfs merge=lfs -text

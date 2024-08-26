@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link type="text/css" href="{% static "css/product_all.css" %}" rel="stylesheet" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer src="{% static "script.js" %}"></script>
+
+    <title>{{ product.name }} </title>
+
+  </head>
+  <body>
+
+
+    <!-- Header -->
+    <header class="head">
+      <div class="head-lft">
+        <button class="head-lft__btn">
+          <img
+            src="images/icon-menu.svg"
+            alt="menu image"
+            class="head-lft__btn-img"
+          />
+        </button>
+        <a href="{% url "home" %}"><img src="{% static "images/logo.svg" %}" alt="logo" class="head-logo" /></a>
+        
+        <ul class="head-nav">
+         
+          <a class="head-nav__item" style="text-decoration: none; color: black;" href="{% url "product_list" %}">Collections</a>
+        </ul>
+      </div>
+
+      <div class="head-rgt">
+        <a href="{% url 'display_cart_item' %}" class="head-rgt__btn">
+          <img
+              src="{% static 'images/icon-cart.svg' %}"
+              alt="cart image"
+              class="head-cart__btn-img"/>
+        </a>
+
+       
+      </div>
+    </header>
+
+    <!-- Main item container -->
+    <main class="item">
+      <section class="img">
+        <img src="{{product.image.url}}" alt="" class="img-main" />
+        <div class="img-btns">
+        </div>
+      </section>
+
+      <section class="price">
+        <h2 class="price-sub__heading">{{product.brand}}</h2>
+        <h1 class="price-main__heading">{{product.name}}</h1>
+        <p class="price-txt">
+            {{ product.description }}
+        </p>
+        <div class="price-box">
+            <span class="price-box__old">₹ {{product.display_price}}</span>
+          <div class="price-box__main">
+            <span class="price-box__main-new" id="selling-price"></span> 
+            <span class="price-box__main-discount"> 50%</span>
+          </div>
+            <h3 id="quantity">Quantity:</h4> 
+          <div id="size-buttons">
+            {% for alternative in alternatives %}
+                <button class="size-button" data-alternative-id="{{ alternative.id }}" data-selling-price="{{ alternative.selling_price }}" data-quantity="{{ alternative.stock }}">{{ alternative.sizes.name }}</button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="price-btnbox">
+         
+          <form method="post" enctype="multipart/form-data" action="{% url 'upload_images' pk=product.pk %}">
+              {% csrf_token %}
+              {{ source_form.as_p }}
+              <button type="submit" class="price-cart__btn btn--orange">Try-On</button>
+          </form>
+          
+      
+           
+          <button id="add-to-cart-button" class="price-cart__btn btn--orange">
+            <img src="{% static "images/icon-cart.svg" %}" alt="cart image" class="price-cart__btn-img"/>
+            Add to cart
+        </button>
+        </div>
+      </section>
+      <section class="custom-testimonial-section">
+        <h2 class="custom-testimonial-heading">Customer Testimonials</h2>
+        <div class="custom-testimonial-list">
+            {% for testimonial in testimonials %}
+                <div class="custom-testimonial-item">
+                    <h3 class="custom-testimonial-rating">{{ testimonial.rating }}/5 Stars</h3>
+                    <p class="custom-testimonial-text">{{ testimonial.review }}</p>
+                    <p class="custom-testimonial-author">- {{ testimonial.added_by.username }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <button id="open-testimonial-form" class="btn btn--orange">Add Your Testimonial</button>
+    </section>
+
+    <!-- Testimonial Form Popup -->
+    <div id="testimonial-form-modal" class="custom-testimonial-modal">
+        <div class="custom-testimonial-modal-content">
+            <span class="custom-testimonial-close">&times;</span>
+            <h3>Add Your Testimonial</h3>
+            <form id="testimonial-form" method="post" action="{% url 'product_detail' product.id %}">
+                {% csrf_token %}
+                <div class="custom-testimonial-form-group">
+                    <label for="id_rating">Rating:</label>
+                    <input type="number" id="id_rating" name="rating" min="1" max="5" required>
+                </div>
+                <div class="custom-testimonial-form-group">
+                    <label for="id_review">Review:</label>
+                    <textarea id="id_review" name="review" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn--orange">Submit Testimonial</button>
+            </form>
+        </div>
+    </div>
+
+
+    </main>
+    
+
+    <p id="selected-size"></p>
+    
+
+    <script>
+      $(document).ready(function() {
+          // Initialize selling price and quantity with default values
+          var defaultSellingPrice = $('.size-button').first().data('selling-price');
+          var defaultQuantity = $('.size-button').first().data('quantity');
+          var selectedAlternativeId = $('.size-button').first().data('alternative-id');
+      
+          $('#selling-price').text(' ₹' + defaultSellingPrice);
+          $('#quantity').text('Quantity: ' + defaultQuantity);
+          $('#add-to-cart-button').data('alternative-id', selectedAlternativeId);
+      
+          $('.size-button').click(function() {
+              // Get data from the selected size button
+              var sellingPrice = $(this).data('selling-price');
+              var quantity = $(this).data('quantity');
+              var alternativeId = $(this).data('alternative-id');
+      
+              // Update the displayed selling price and quantity
+              $('#selling-price').text('₹ ' + sellingPrice);
+              $('#quantity').text('Quantity: ' + quantity);
+      
+              // Update the data attribute of the Add to Cart button
+              $('#add-to-cart-button').data('alternative-id', alternativeId);
+          });
+      
+          $('#add-to-cart-button').click(function() {
+              var alternativeId = $(this).data('alternative-id');
+      
+              if (!alternativeId) {
+                  alert('Please select a size.');
+                  return;
+              }
+      
+              // AJAX request to add item to cart
+              $.ajax({
+                  url: 'add_to_cart/' + alternativeId + '/',
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  success: function(response) {
+                      alert(response.success);
+                  },
+                  error: function(response) {
+                      if (response.responseJSON && response.responseJSON.error) {
+                          alert(response.responseJSON.error);
+                      } else {
+                          alert('An error occurred. Please try again.');
+                      }
+                  }
+              });
+          });
+      });
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          var modal = document.getElementById("testimonial-form-modal");
+          var btn = document.getElementById("open-testimonial-form");
+          var span = document.getElementsByClassName("custom-testimonial-close")[0];
+      
+          btn.onclick = function() {
+              modal.style.display = "block";
+          }
+      
+          span.onclick = function() {
+              modal.style.display = "none";
+          }
+      
+          window.onclick = function(event) {
+              if (event.target == modal) {
+                  modal.style.display = "none";
+              }
+          }
+      });
+      </script>
+      
+
+  </body>
+</html>

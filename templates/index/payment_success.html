@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Success</title>
+</head>
+<body>
+    <h1>Payment Success</h1>
+    <p>Thank you for your purchase!</p>
+    <p>Order ID: {{ order.id }}</p>
+    <p>Amount: {{ order.amount }}</p>
+    <a href="{% url "home" %}">back to Home</a>
+</body>
+</html>

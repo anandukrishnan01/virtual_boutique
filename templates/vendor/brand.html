@@ -1,0 +1,161 @@
+{% extends 'basevendor.html' %}
+
+{% block title %}Brand List{% endblock %}
+{% block page_heading %}Brand{% endblock page_heading %}
+{% block heading %}Manage Brand{% endblock heading %}
+{% block extra_head %}
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+  }
+
+  .container {
+      margin-top: 50px;
+  }
+
+  table {
+      width: 100%;
+      margin-top: 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-collapse: collapse;
+  }
+
+  th, td {
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #ddd;
+  }
+
+  th {
+      background-color: #413a42;
+      color: white;
+  }
+
+  tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  tr:hover {
+      background-color: #ddd;
+  }
+
+  img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+  }
+
+  .btn {
+      margin: 5px;
+  }
+</style>
+{% endblock %}
+  
+{% block content %}
+<!-- Button to Open the Modal -->
+<div class="text-center">
+  <button type="button" class="btn btn-primary add-brand-btn" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+      Add Brand
+  </button>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="addBrandModalLabel">Add Brand</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form method="post" action="{% url 'savedata' %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                      <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Name" name="cname">
+                  </div>
+                  <div class="mb-3">
+                      <input type="text" class="form-control" id="formGroupExampleInput1" placeholder="Description" name="cdesc">
+                  </div>
+                  <div class="mb-3">
+                      <label for="formGroupExampleInput3">Image</label>
+                      <input type="file" class="form-control" id="formGroupExampleInput3" name="cimg">
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-success">UPLOAD</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<table>
+  <tr>
+      <th>Brand</th>
+      <th>Description</th>
+      <th>Image</th>
+      <th>Edit</th>
+      <th>Delete</th>
+  </tr>
+  {% for i in data %}
+  <tr>
+      <td>{{ i.name }}</td>
+      <td>{{ i.desc }}</td>
+      <td><img src="{{ i.image.url }}" alt="Brand Image"></td>
+      <td>
+          <form action="{% url 'editbrand' dataid=i.id %}">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editBrandModal{{ i.id }}">EDIT</button>
+          </form>
+      </td>
+      <td>
+          <form action="{% url 'deletebrand' dataid=i.id %}">
+              <button type="submit" class="btn btn-danger">DELETE</button>
+          </form>
+      </td>
+  </tr>
+  {% endfor %}
+</table>
+<!-- The Edit Modal -->
+{% for i in data %}
+<div class="modal fade" id="editBrandModal{{ i.id }}" tabindex="-1" aria-labelledby="editBrandModalLabel{{ i.id }}" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title" id="editBrandModalLabel{{ i.id }}">Edit Brand</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <form method="post" action="{% url 'updatebrand' dataid=i.id %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="mb-3">
+                  <label for="editBrandName">Brand</label>
+                  <input type="text" class="form-control" id="editBrandName" name="cname" value="{{ i.name }}">
+              </div>
+              <div class="mb-3">
+                  <label for="editBrandDescription">Description</label>
+                  <input type="text" class="form-control" id="editBrandDescription" name="cdesc" value="{{ i.desc }}">
+              </div>
+              <div class="mb-3">
+                  <label for="editBrandImage">Image</label>
+                  <input type="file" class="form-control" id="editBrandImage" name="cimg">
+                  <img src="{{ i.image.url }}" alt="Brand Image" style="display: block; margin-top: 5px; max-width: 100px;">
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+</div>
+{% endfor %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+{% endblock %}
+

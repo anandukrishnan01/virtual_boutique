@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if address %}Edit Address{% else %}Add Address{% endif %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: grid;
+            grid-gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: #000000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #515354;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{% if address %}Edit Address{% else %}Add Address{% endif %}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <label for="alternative_name">Alternative Name:</label>
+            <input type="text" name="alternative_name" id="alternative_name" value="{{ address.alternative_name|default:'' }}">
+            <label for="house_name">House Name:</label>
+            <input type="text" name="house_name" id="house_name" value="{{ address.house_name|default:'' }}">
+            <label for="post">Post:</label>
+            <input type="text" name="post" id="post" value="{{ address.post|default:'' }}">
+            <label for="dist">District:</label>
+            <input type="text" name="dist" id="dist" value="{{ address.dist|default:'' }}">
+            <label for="state">State:</label>
+            <input type="text" name="state" id="state" value="{{ address.state|default:'' }}">
+            <label for="zip_code">Zip Code:</label>
+            {% if error_messages.zip_code %}
+                <p class="error">{{ error_messages.zip_code }}</p>
+            {% endif %}
+            <input type="text" name="zip_code" id="zip_code" value="{{ address.zip_code|default:'' }}">
+            
+            <label for="alternative_phone">Alternative Phone:</label>
+            {% if error_messages.alternative_phone %}
+                <p class="error">{{ error_messages.alternative_phone }}</p>
+            {% endif %}
+            <input type="text" name="alternative_phone" id="alternative_phone" value="{{ address.alternative_phone|default:'' }}">
+            <button type="submit">Save</button>
+        </form>        
+        <a class="back-link" href="{% url 'display_cart_item' %}">Back to Cart</a>
+    </div>
+</body>
+</html>

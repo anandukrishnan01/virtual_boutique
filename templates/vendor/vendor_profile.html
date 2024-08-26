@@ -1,0 +1,53 @@
+{% extends 'basevendor.html' %}
+
+{% block title %}Category List{% endblock %}
+{% block extra_head %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<style>
+    .profile-header {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .profile-details {
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+  
+{% block content %}
+<div class="container">
+    <div class="profile-header text-center mb-4">
+        <h1 class="display-4">Vendor Profile</h1>
+    </div>
+    <div class="profile-details card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Profile Information</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="card-text"><strong>First Name:</strong> {{ vendor.user.first_name }}</p>
+                    <p class="card-text"><strong>Last Name:</strong> {{ vendor.user.last_name }}</p>
+                    <p class="card-text"><strong>Email:</strong> {{ vendor.user.email }}</p>
+                    <p class="card-text"><strong>Phone Number:</strong> {{ vendor.user.phone_number }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="card-text"><strong>Company Name:</strong> {{ vendor.company_name }}</p>
+                    <p class="card-text"><strong>Vendor License:</strong> {{ vendor.vendor_license }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-link nav-link" style="display: inline; padding: 0;">Logout</button>
+    </form>
+</div>
+
+{% endblock %}
+
+
+
+
+

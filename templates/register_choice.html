@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        .custom-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .custom-button:hover {
+            background-color: #0056b3;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .radio-item {
+            margin-bottom: 15px;
+        }
+
+        .radio-label {
+            margin-left: 10px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding-left: 50px; padding-top: 30px;">
+        <a href="{% url "home" %}">back to Home >></a>
+    </div>
+<div class="card">
+    <h2>Select Your Role</h2>
+    <form method="post">
+      {% csrf_token %}
+       
+        <div class="radio-group">
+            <div class="radio-item">
+                <input type="radio" id="id_role_1" name="role" value="1">
+                <label class="radio-label" for="id_role_1">Vendor</label>
+            </div>
+            <div class="radio-item">
+                <input type="radio" id="id_role_2" name="role" value="2">
+                <label class="radio-label" for="id_role_2">Customer</label>
+            </div>
+        </div>
+        <br>
+        <button class="custom-button" type="submit">Next</button>
+    </form>
+</div>
+</body>
+</html>
